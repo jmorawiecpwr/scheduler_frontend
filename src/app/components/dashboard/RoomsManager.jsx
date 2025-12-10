@@ -1,7 +1,3 @@
-/**
- * Rooms Manager Component (Fixed & Translated)
- * Handles CRUD operations for rooms with type and capacity management
- */
 'use client';
 
 import React, { useState } from 'react';
@@ -244,7 +240,6 @@ export default function RoomsManager({
         )}
       </Card>
 
-      {/* Create/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}

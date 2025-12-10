@@ -118,7 +118,6 @@ export default function RegisterPage() {
     return (
         <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#0B0C10] p-4 relative overflow-hidden font-sans selection:bg-purple-500/30">
             
-            {/* Ambient Background */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-purple-900/20 blur-[120px]" />
                 <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-900/10 blur-[120px]" />
@@ -181,7 +180,6 @@ export default function RegisterPage() {
                             )}
                         />
 
-                        {/* Role Selector */}
                         <div className="group relative">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
                                 <ShieldCheckIcon className="h-5 w-5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
@@ -201,8 +199,6 @@ export default function RegisterPage() {
                                 <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                             </div>
                         </div>
-
-                        {/* School Code Logic */}
                         <div className="transition-all duration-300 ease-in-out">
                             {role !== 'dyrektor' ? (
                                 <FormInput

@@ -1,7 +1,3 @@
-/**
- * Clustering Modal Component
- * Modal for configuring clustering parameters
- */
 'use client';
 
 import React, { useState } from 'react';

@@ -11,14 +11,10 @@ import {
     ArrowRightIcon
 } from '@heroicons/react/24/solid';
 
-// --- KONFIGURACJA SUPABASE ---
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// --- KOMPONENTY WIZUALNE (REACT BITS STYLE) ---
-
-// 1. Spotlight Card - Efekt podświetlenia za myszką
 const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(139, 92, 246, 0.15)" }) => {
     const divRef = useRef(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -53,7 +49,6 @@ const SpotlightCard = ({ children, className = "", spotlightColor = "rgba(139, 9
     );
 };
 
-// 2. Animated Background - Subtelna zorza w tle
 const AuroraBackground = () => (
     <div className="fixed inset-0 -z-10 overflow-hidden bg-[#0B0C10]">
         <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] animate-aurora opacity-30 bg-[conic-gradient(from_90deg_at_50%_50%,#00000000_50%,#581c87_50%),conic-gradient(from_270deg_at_50%_50%,#2e1065_50%,#00000000_50%)] mix-blend-screen blur-[100px]" />
@@ -61,10 +56,7 @@ const AuroraBackground = () => (
     </div>
 );
 
-// --- GŁÓWNA STRONA ---
-
 export default function StudentDashboardPage() {
-    // --- Stany (Logika bez zmian) ---
     const [surveyCode, setSurveyCode] = useState('');
     const [surveyLoaded, setSurveyLoaded] = useState(false);
     const [classLevel, setClassLevel] = useState('');
@@ -83,8 +75,6 @@ export default function StudentDashboardPage() {
 
     const softSubjects = ["religia", "wf", "plastyka", "muzyka", "technika"];
     const hardSubjects = ["matematyka", "polski", "jezyk_obcy", "biologia", "fizyka", "informatyka", "chemia", "historia"];
-
-    // --- Funkcje Logiki ---
 
     const fetchSurveyDetails = async () => {
         if (!surveyCode.trim()) { setSurveyError('Podaj kod.'); return; }
@@ -132,7 +122,6 @@ export default function StudentDashboardPage() {
             setIsSubmitting(false);
         } else {
             setSurveySuccess('Gotowe! Twoje preferencje zostały zapisane.');
-            // Reset po 3s
             setTimeout(() => {
                 window.location.reload();
             }, 3000);
@@ -145,7 +134,6 @@ export default function StudentDashboardPage() {
 
             <div className="container mx-auto px-4 py-12 min-h-screen flex flex-col items-center justify-center relative z-10">
                 
-                {/* Logo / Header */}
                 <div className="text-center mb-12 animate-fade-in-up">
                     <div className="inline-flex items-center justify-center p-3 mb-6 rounded-2xl bg-slate-800/50 border border-slate-700 backdrop-blur-md shadow-2xl">
                         <SparklesIcon className="w-6 h-6 text-purple-400 mr-2" />
@@ -159,7 +147,6 @@ export default function StudentDashboardPage() {
                     </p>
                 </div>
 
-                {/* KROK 1: Wprowadzanie Kodu */}
                 {!surveyLoaded && (
                     <SpotlightCard className="w-full max-w-md p-8 animate-fade-in-up delay-100">
                         <div className="text-center">
@@ -188,10 +175,8 @@ export default function StudentDashboardPage() {
                     </SpotlightCard>
                 )}
 
-                {/* KROK 2: Formularz */}
                 {surveyLoaded && !surveySuccess && (
                     <div className="w-full max-w-4xl space-y-6 animate-fade-in-up">
-                        {/* Header Ankiety */}
                         <div className="flex justify-between items-end px-4">
                             <div>
                                 <h2 className="text-3xl font-bold text-white">Preferencje</h2>
@@ -203,7 +188,6 @@ export default function StudentDashboardPage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Dane Osobowe */}
                             <SpotlightCard className="p-6 flex flex-col justify-center h-full">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400"><UserIcon className="w-5 h-5" /></div>
@@ -232,8 +216,6 @@ export default function StudentDashboardPage() {
                                     </div>
                                 </div>
                             </SpotlightCard>
-
-                            {/* Pora Dnia */}
                             <SpotlightCard className="p-6 h-full">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="p-2 bg-yellow-500/20 rounded-lg text-yellow-400"><ClockIcon className="w-5 h-5" /></div>
@@ -265,7 +247,6 @@ export default function StudentDashboardPage() {
                             </SpotlightCard>
                         </div>
 
-                        {/* Przedmioty Soft */}
                         <SpotlightCard className="p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-2 bg-pink-500/20 rounded-lg text-pink-400"><SparklesIcon className="w-5 h-5" /></div>
@@ -297,8 +278,6 @@ export default function StudentDashboardPage() {
                                 ))}
                             </div>
                         </SpotlightCard>
-
-                        {/* Przedmioty Hard */}
                         <SpotlightCard className="p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="p-2 bg-emerald-500/20 rounded-lg text-emerald-400"><AcademicCapIcon className="w-5 h-5" /></div>
@@ -325,8 +304,6 @@ export default function StudentDashboardPage() {
                                 ))}
                             </div>
                         </SpotlightCard>
-
-                        {/* Priorytet */}
                         <SpotlightCard className="p-6">
                             <label className="block text-sm font-bold text-slate-300 mb-3">Co jest dla Ciebie najważniejsze?</label>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -350,7 +327,6 @@ export default function StudentDashboardPage() {
                             </div>
                         </SpotlightCard>
 
-                        {/* Submit Button */}
                         <div className="pt-4 pb-12">
                             {surveyError && (
                                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 text-red-200 rounded-xl text-center text-sm">
@@ -372,7 +348,6 @@ export default function StudentDashboardPage() {
                     </div>
                 )}
 
-                {/* KROK 3: Sukces */}
                 {surveySuccess && (
                     <div className="w-full max-w-md text-center animate-fade-in-up">
                         <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(34,197,94,0.2)]">

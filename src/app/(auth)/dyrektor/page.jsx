@@ -1,24 +1,17 @@
-/**
- * Director Dashboard Page (Integrated)
- * Workflow: Dashboard -> Clustering -> Profiles -> Manual Classes -> Generation -> Editor -> Commit
- */
 'use client';
 
 import { useState } from 'react';
 import { useSchoolData } from '@/app/hooks/useSchoolData';
 import DashboardLayout from '@/app/layouts/DashboardLayout';
 
-// Sub-components
 import TeachersManager from '@/app/components/dashboard/TeachersManager';
 import RoomsManager from '@/app/components/dashboard/RoomsManager';
 import SurveysManager from '@/app/components/dashboard/SurveysManager';
 import ClassesManager from '@/app/components/dashboard/ClassesManager';
-import CurriculumProfiles from '@/app/components/dashboard/CurriculumProfiles'; // Upewnij się, że plik istnieje
+import CurriculumProfiles from '@/app/components/dashboard/CurriculumProfiles';
 import ClusteringModal from '@/app/components/scheduler/ClusteringModal';
 import ClusterViewer from '@/app/components/scheduler/ClusterViewer';
 import InteractiveTimetable from '@/app/components/timetable/InteractiveTimetable';
-
-// New Integrated Components
 import GenerationProgressBar from '@/app/components/timetable/GenerationProgressBar';
 import TimetableEditorModal from '@/app/components/timetable/TimetableEditorModal';
 
@@ -27,28 +20,22 @@ import {
 } from '../../ui';
 
 export default function DyrektorPage() {
-  // Data hook
   const {
     schoolCode,
     loading,
     error,
-    // Dane podstawowe
     teachers,
     rooms,
     surveys,
-    // Klasy i Profile
-    finalClasses, // Klasy z klastrów
-    manualClasses, // Klasy ręczne
-    profiles, // Szablony programów
-    // CRUD Metody
+    finalClasses,
+    manualClasses,
+    profiles,
     refetch,
     createTeacher, updateTeacher, deleteTeacher,
     createRoom, updateRoom, deleteRoom,
     createSurvey, closeSurvey, deleteSurvey,
-    // Profile & Manual Classes CRUD
     createProfile, updateProfile, deleteProfile,
     createManualClass, deleteManualClass,
-    // Scheduler Actions
     runClustering, confirmClusters,
     generateTimetables,
     fetchClassTimetable,
@@ -56,21 +43,14 @@ export default function DyrektorPage() {
     validateMove, deleteAiClass, addStudentToClass, removeStudentFromClass
   } = useSchoolData();
 
-  // --- UI State ---
   const [activeTab, setActiveTab] = useState('overview');
   const [notification, setNotification] = useState(null);
-
-  // --- Clustering State ---
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [showClusteringModal, setShowClusteringModal] = useState(false);
   const [clusteringResult, setClusteringResult] = useState(null);
-
-  // --- Timetable Viewing State ---
   const [selectedClass, setSelectedClass] = useState(null);
   const [timetableData, setTimetableData] = useState(null);
   const [timetableLoading, setTimetableLoading] = useState(false);
-
-  // --- Generation & Editing State ---
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState({ 
     stage: '', current: 0, total: 0 
@@ -79,13 +59,11 @@ export default function DyrektorPage() {
   const [showEditor, setShowEditor] = useState(false);
   const [draftTimetables, setDraftTimetables] = useState(null);
 
-  // Notification helper
   const showNotification = (type, message) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 4000);
   };
 
-  // --- Handlers: Clustering ---
   const handleInitiateClustering = (survey) => {
     setSelectedSurvey(survey);
     setShowClusteringModal(true);
@@ -118,8 +96,6 @@ export default function DyrektorPage() {
     }
   };
 
-  // --- Handlers: Generation & Workflow ---
-
   const simulateProgress = (total) => {
     let current = 0;
     const interval = setInterval(() => {
@@ -135,7 +111,6 @@ export default function DyrektorPage() {
   };
 
   const handleGenerateFlow = async () => {
-    // Liczymy wszystkie klasy (klastrowe + manualne)
     const totalClassesEstimate = (finalClasses.length + manualClasses.length) || 10;
     
     setIsGenerating(true);
@@ -144,7 +119,6 @@ export default function DyrektorPage() {
     const progressInterval = simulateProgress(totalClassesEstimate);
 
     try {
-      // 1. Wywołanie algorytmu i pobranie wyników
       const generatedData = await generateTimetables(); 
 
       clearInterval(progressInterval);
@@ -164,11 +138,8 @@ export default function DyrektorPage() {
     }
   };
 
-  // --- Handlers: Editor & Validation ---
-
   const handleEditorSave = async (approvedTimetables) => {
     try {
-      // Zapisujemy zmiany z edytora do bazy
       await saveFinalTimetables(approvedTimetables);
       
       setShowEditor(false);
@@ -181,21 +152,10 @@ export default function DyrektorPage() {
   };
 
   const handleEditorValidate = async (lessonId, day, hour, roomId, surveyCode) => {
-    // Prawdziwa walidacja z backendu
     return await validateMove(lessonId, day, hour, roomId, surveyCode);
   };
-
-  // --- Handlers: Timetable Viewing ---
-// --- Wewnątrz DyrektorPage.js ---
-
-  const handleShowTimetable = async (classInfo) => {
-    // FIX: Jeśli klasa jest manualna, musimy szukać planu pod hasłem 'MANUAL', 
-    // nawet jeśli klasa ma przypisany kod ankiety dla uczniów (np. 'X8J1K2').
-    // Jeśli klasa jest z AI, używamy jej survey_code.
-    
+  const handleShowTimetable = async (classInfo) => {    
     const codeToFetch = classInfo.isManual ? 'MANUAL' : classInfo.primarySurveyCode;
-    
-    // Walidacja dla klas AI (muszą mieć kod)
     if (!classInfo.isManual && !classInfo.primarySurveyCode) {
       showNotification('error', 'Brak kodu ankiety dla tej klasy');
       return;
@@ -206,15 +166,14 @@ export default function DyrektorPage() {
     
     try {
       const data = await fetchClassTimetable(
-        codeToFetch, // <--- UŻYWAMY POPRAWIONEGO KODU
+        codeToFetch,
         classInfo.originalClusterLabel
       );
-      
-      // Sprawdzenie czy przyszły dane (czasami backend zwraca pusty obiekt {})
+
       if (data && Object.keys(data).length > 0) {
         setTimetableData(data);
       } else {
-        setTimetableData(null); // Pokaże "Brak planu" zamiast pustej siatki
+        setTimetableData(null);
       }
       
     } catch (err) {
@@ -225,7 +184,6 @@ export default function DyrektorPage() {
     }
   };
 
-  // --- Tab Configuration ---
   const tabs = [
     { id: 'overview', label: 'Przegląd' },
     { id: 'teachers', label: 'Nauczyciele', count: teachers.length },
@@ -235,7 +193,6 @@ export default function DyrektorPage() {
     { id: 'profiles', label: 'Szablony Siatki', count: profiles.length },
   ];
 
-  // --- Loading State ---
   if (loading && !schoolCode) {
     return (
       <DashboardLayout schoolCode="">
@@ -248,8 +205,7 @@ export default function DyrektorPage() {
 
   return (
     <DashboardLayout schoolCode={schoolCode}>
-      
-      {/* Page Header */}
+
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-slate-900">Panel Dyrektora</h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -257,33 +213,26 @@ export default function DyrektorPage() {
         </p>
       </div>
 
-      {/* Global Notifications */}
       {notification && (
         <div className="fixed top-20 right-4 z-50 max-w-md animate-slide-in">
           <Alert type={notification.type} message={notification.message} onDismiss={() => setNotification(null)} />
         </div>
       )}
 
-      {/* Error state */}
       {error && (
         <Alert type="error" title="Błąd ładowania danych" message={error} className="mb-6" />
       )}
 
-      {/* Navigation Tabs */}
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
 
-      {/* Tab Content */}
       <div className="mt-6">
-        
-        {/* Overview Tab */}
+
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatsCard label="Nauczyciele" count={teachers.length} icon="user" color="blue" />
             <StatsCard label="Sale" count={rooms.length} icon="home" color="emerald" />
             <StatsCard label="Ankiety" count={surveys.length} icon="clipboard" color="amber" />
             <StatsCard label="Wszystkie Klasy" count={finalClasses.length + manualClasses.length} icon="collection" color="purple" />
-
-            {/* Quick Actions */}
             <div className="lg:col-span-4">
               <Card>
                 <CardHeader title="Szybkie akcje" description="Najczęściej używane funkcje" />
@@ -305,7 +254,6 @@ export default function DyrektorPage() {
           </div>
         )}
 
-        {/* Teachers Tab */}
         {activeTab === 'teachers' && (
           <TeachersManager 
             teachers={teachers} 
@@ -315,7 +263,6 @@ export default function DyrektorPage() {
           />
         )}
 
-        {/* Rooms Tab */}
         {activeTab === 'rooms' && (
           <RoomsManager 
             rooms={rooms}
@@ -325,11 +272,10 @@ export default function DyrektorPage() {
           />
         )}
 
-        {/* Surveys Tab */}
       {activeTab === 'surveys' && (
         <SurveysManager 
           surveys={surveys}
-          profiles={profiles} // <--- DODAJ TO! (useSchoolData już to zwraca)
+          profiles={profiles}
           
           onCreateSurvey={async (data) => { 
             const code = await createSurvey(data); 
@@ -342,7 +288,6 @@ export default function DyrektorPage() {
         />
       )}
 
-        {/* Profiles Tab (NEW) */}
         {activeTab === 'profiles' && (
           <CurriculumProfiles 
             profiles={profiles}
@@ -352,7 +297,6 @@ export default function DyrektorPage() {
           />
         )}
 
-        {/* Classes Tab (Updated) */}
         {activeTab === 'classes' && (
           <ClassesManager 
             classes={finalClasses}
@@ -360,8 +304,7 @@ export default function DyrektorPage() {
             profiles={profiles}
             onCreateManualClass={async (data) => { await createManualClass(data); showNotification('success', 'Klasa dodana'); }}
             onDeleteManualClass={async (id) => { await deleteManualClass(id); showNotification('success', 'Klasa usunięta'); }}
-            
-            // NOWE PROPSY:
+
             onDeleteAiClass={async (label, code) => { await deleteAiClass(label, code); showNotification('success', 'Klasa usunięta'); }}
             onAddStudent={addStudentToClass}
             onRemoveStudent={removeStudentFromClass}
@@ -372,9 +315,6 @@ export default function DyrektorPage() {
         )}
 
       </div>
-
-      {/* --- MODALS SECTION --- */}
-
       <ClusteringModal 
         isOpen={showClusteringModal} 
         survey={selectedSurvey} 

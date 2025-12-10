@@ -1,7 +1,3 @@
-/**
- * Cluster Viewer Component
- * Displays clustering results and allows manual adjustments
- */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -16,12 +12,10 @@ export default function ClusterViewer({
   const [draggedStudent, setDraggedStudent] = useState(null);
   const [isConfirming, setIsConfirming] = useState(false);
 
-  // Initialize clusters from props
   useEffect(() => {
     if (clusteredData && typeof clusteredData === 'object') {
-      // Handle both { "0": [...], "1": [...] } and timestamp (number) formats
       if (typeof clusteredData === 'number') {
-        return; // This is a timestamp trigger, ignore
+        return;
       }
       setClusters(clusteredData);
     }
@@ -47,12 +41,10 @@ export default function ClusterViewer({
     setClusters((prev) => {
       const updated = { ...prev };
       
-      // Remove from source cluster
       updated[fromCluster] = updated[fromCluster].filter(
         (s) => s.id !== student.id
       );
-      
-      // Add to target cluster
+
       updated[toCluster] = [...(updated[toCluster] || []), student];
       
       return updated;
@@ -117,7 +109,6 @@ export default function ClusterViewer({
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, clusterLabel)}
           >
-            {/* Cluster Header */}
             <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium text-slate-900">
@@ -127,7 +118,6 @@ export default function ClusterViewer({
               </div>
             </div>
 
-            {/* Students List */}
             <div className="p-2 max-h-64 overflow-y-auto min-h-[100px]">
               {students?.length > 0 ? (
                 <ul className="space-y-1">
@@ -174,7 +164,6 @@ export default function ClusterViewer({
         ))}
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
         <Button variant="secondary" onClick={onRecluster}>
           Anuluj

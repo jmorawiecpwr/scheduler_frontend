@@ -1,7 +1,3 @@
-/**
- * Teachers Manager Component (Full Version)
- * Zarządzanie nauczycielami: Przedmioty + Dostępność Czasowa
- */
 'use client';
 
 import React, { useState } from 'react';
@@ -31,7 +27,6 @@ const DAY_LABELS = {
   friday: 'Pt',
 };
 
-// Lista przedmiotów zgodna z systemem
 const SUBJECTS_LIST = [
   'polski', 'matematyka', 'angielski', 'niemiecki', 'historia', 'wos', 
   'biologia', 'chemia', 'fizyka', 'geografia', 'informatyka', 
@@ -53,7 +48,6 @@ export default function TeachersManager({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState(null);
   
-  // Stan formularza
   const [formData, setFormData] = useState({
     name: '',
     subjects: [],
@@ -63,8 +57,6 @@ export default function TeachersManager({
   
   const [formError, setFormError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // --- Helpers ---
 
   const resetForm = () => {
     setFormData({
@@ -83,7 +75,6 @@ export default function TeachersManager({
   };
 
   const openEditModal = (teacher) => {
-    // Mapowanie dostępności z backendu na format formularza
     const availability = emptyAvailability();
     if (teacher.availability) {
       DAYS.forEach((day) => {
@@ -99,7 +90,7 @@ export default function TeachersManager({
 
     setFormData({
       name: teacher.name || '',
-      subjects: teacher.subjects || [], // Ładujemy przedmioty
+      subjects: teacher.subjects || [],
       availability,
       max_hours_per_day: teacher.max_hours_per_day || 6,
     });
@@ -132,8 +123,6 @@ export default function TeachersManager({
     }));
   };
 
-  // --- Submit ---
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
@@ -148,7 +137,6 @@ export default function TeachersManager({
       return;
     }
 
-    // Transformacja dostępności do formatu backendu (tablice stringów)
     const availabilityPayload = {};
     DAYS.forEach((day) => {
       const { preferred, unavailable } = formData.availability[day];
@@ -239,7 +227,6 @@ export default function TeachersManager({
         )}
       </Card>
 
-      {/* Modal Edycji / Tworzenia */}
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
@@ -249,7 +236,6 @@ export default function TeachersManager({
         <form onSubmit={handleSubmit} className="space-y-6">
           {formError && <Alert type="error" message={formError} />}
 
-          {/* Dane Podstawowe */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input 
               label="Imię i Nazwisko" 
@@ -266,7 +252,6 @@ export default function TeachersManager({
             />
           </div>
 
-          {/* Wybór Przedmiotów */}
           <div>
             <label className="block text-sm font-bold text-slate-700 mb-2">
               Nauczane przedmioty <span className="text-red-500">*</span>
@@ -296,7 +281,6 @@ export default function TeachersManager({
             <p className="text-xs text-slate-500 mt-1">Kliknij, aby wybrać lub odznaczyć.</p>
           </div>
 
-          {/* Dostępność (Opcjonalna, ale ważna) */}
           <div className="border-t pt-4">
             <h4 className="text-sm font-bold text-slate-900 mb-3">Dostępność Tygodniowa (Opcjonalne)</h4>
             <p className="text-xs text-slate-500 mb-3">

@@ -1,10 +1,5 @@
-/**
- * UI Component Library
- * Clean SaaS aesthetic with semantic colors
- */
 import React from 'react';
 
-// Badge component for status indicators
 export function Badge({ children, variant = 'default', size = 'sm' }) {
   const variants = {
     default: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -29,7 +24,6 @@ export function Badge({ children, variant = 'default', size = 'sm' }) {
   );
 }
 
-// Button component
 export function Button({
   children,
   variant = 'primary',
@@ -92,7 +86,6 @@ export function Button({
   );
 }
 
-// Card component
 export function Card({ children, className = '', padding = 'md' }) {
   const paddings = {
     none: '',
@@ -110,7 +103,6 @@ export function Card({ children, className = '', padding = 'md' }) {
   );
 }
 
-// Card Header
 export function CardHeader({ title, description, action }) {
   return (
     <div className="flex items-start justify-between mb-6">
@@ -125,7 +117,6 @@ export function CardHeader({ title, description, action }) {
   );
 }
 
-// Input component
 export function Input({
   label,
   error,
@@ -160,7 +151,6 @@ export function Input({
   );
 }
 
-// Select component
 export function Select({ label, options, error, className = '', ...props }) {
   return (
     <div className={className}>
@@ -190,7 +180,6 @@ export function Select({ label, options, error, className = '', ...props }) {
   );
 }
 
-// Table components
 export function Table({ children, className = '' }) {
   return (
     <div className={`overflow-hidden rounded-lg border border-slate-200 ${className}`}>
@@ -241,8 +230,6 @@ export function TableCell({ children, className = '' }) {
     </td>
   );
 }
-
-// Modal component
 export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   if (!isOpen) return null;
 
@@ -256,17 +243,14 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-center justify-center p-4">
-        {/* Backdrop */}
         <div
           className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
           onClick={onClose}
         />
 
-        {/* Modal */}
         <div
           className={`relative w-full ${sizes[size]} bg-white rounded-2xl shadow-xl transform transition-all`}
         >
-          {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
             <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
             <button
@@ -278,8 +262,6 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
               </svg>
             </button>
           </div>
-
-          {/* Content */}
           <div className="px-6 py-4">{children}</div>
         </div>
       </div>
@@ -287,7 +269,6 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   );
 }
 
-// Alert component
 export function Alert({ type = 'info', title, message, onDismiss }) {
   const types = {
     info: {
@@ -372,7 +353,6 @@ export function Alert({ type = 'info', title, message, onDismiss }) {
   );
 }
 
-// Empty State component
 export function EmptyState({ title, description, action, icon }) {
   return (
     <div className="text-center py-12">
@@ -388,7 +368,6 @@ export function EmptyState({ title, description, action, icon }) {
   );
 }
 
-// Spinner component
 export function Spinner({ size = 'md' }) {
   const sizes = {
     sm: 'h-4 w-4',
@@ -419,7 +398,6 @@ export function Spinner({ size = 'md' }) {
   );
 }
 
-// Tabs component
 export function Tabs({ tabs, activeTab, onChange }) {
   return (
     <div className="border-b border-slate-200">
